@@ -27,6 +27,8 @@ async function run() {
     await client.connect();
 
     const craftsCollection = client.db("craftDB").collection("crafts");
+    const categoriesCollection = client.db("craftDB").collection("categories");
+    const usersCollection = client.db("craftDB").collection("users");
 
     app.get('/crafts', async(req, res) => {
       const cursor = craftsCollection.find();
@@ -45,6 +47,26 @@ async function run() {
       const newCraft = req.body;
       console.log(newCraft)
       const result = await craftsCollection.insertOne(newCraft);
+      res.send(result);
+    })
+
+    app.post('/categories', async(req, res) => {
+      const newCategory = req.body;
+      console.log(newCategory)
+      const result = await categoriesCollection.insertOne(newCategory);
+      res.send(result);
+    })
+
+    app.get('/categories', async(req, res) => {
+      const cursor = categoriesCollection.find();
+      const result = await cursor.toArray();
+      res.send(result);
+    })
+
+    app.get('/categories/:id', async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) }
+      const result = await categoriesCollection.findOne(query)
       res.send(result);
     })
 
@@ -77,6 +99,14 @@ async function run() {
       const id = req.params.id;
       const query = { _id: new ObjectId(id) }
       const result = await craftsCollection.deleteOne(query)
+      res.send(result);
+    })
+
+    // user related apis
+    app.post('/users', async (req, res) => {
+      const user = req.body;
+      console.log(user)
+      const result = await usersCollection.insertOne(user);
       res.send(result);
     })
     
